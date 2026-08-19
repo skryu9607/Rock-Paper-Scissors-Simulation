@@ -2,18 +2,29 @@ import pygame
 import os
 import random
 import math
-
-WIDTH = 500
-HEIGHT = 800
+from PIL import Image
+WIDTH = 300 * 2
+HEIGHT = 300 * 2
 
 BG_COLOR = (255, 255, 255)
 
 ROCK_IMG = os.path.join('assets', 'Rock.png')
 PAPER_IMG = os.path.join('assets', 'Paper.png')
 SCISSORS_IMG = os.path.join('assets', 'Scissors.png')
+def load_image(filename):
+	img = Image.open(filename).convert("RGBA")
+	return pygame.image.fromstring(img.tobytes(), img.size, img.mode)
+
+
 
 IMG_WIDTH = 40
 IMG_HEIGHT = 40
+STEP_SPEED = 20.0
+
+
+rock_count = 2
+scissors_count = 5
+paper_count = 5
 
 # make collide function for irregular objects
 
@@ -45,27 +56,27 @@ def collide(p1, p2):
 
         if p1.filename == ROCK_IMG and p2.filename == SCISSORS_IMG:
             setattr(p2, 'filename', ROCK_IMG)
-            setattr(p2, 'image', (pygame.transform.scale(pygame.image.load(ROCK_IMG), (IMG_WIDTH, IMG_HEIGHT))))
+            setattr(p2, 'image', (pygame.transform.scale(load_image(ROCK_IMG), (IMG_WIDTH, IMG_HEIGHT))))
 
         if p1.filename == SCISSORS_IMG and p2.filename == ROCK_IMG:
             setattr(p1, 'filename', ROCK_IMG)
-            setattr(p1, 'image', (pygame.transform.scale(pygame.image.load(ROCK_IMG), (IMG_WIDTH, IMG_HEIGHT))))
+            setattr(p1, 'image', (pygame.transform.scale(load_image(ROCK_IMG), (IMG_WIDTH, IMG_HEIGHT))))
 
         if p1.filename == ROCK_IMG and p2.filename == PAPER_IMG:
             setattr(p1, 'filename', PAPER_IMG)
-            setattr(p1, 'image', (pygame.transform.scale(pygame.image.load(PAPER_IMG), (IMG_WIDTH, IMG_HEIGHT))))
+            setattr(p1, 'image', (pygame.transform.scale(load_image(PAPER_IMG), (IMG_WIDTH, IMG_HEIGHT))))
 
         if p1.filename == PAPER_IMG and p2.filename == ROCK_IMG:
             setattr(p2, 'filename', PAPER_IMG)
-            setattr(p2, 'image', (pygame.transform.scale(pygame.image.load(PAPER_IMG), (IMG_WIDTH, IMG_HEIGHT))))
+            setattr(p2, 'image', (pygame.transform.scale(load_image(PAPER_IMG), (IMG_WIDTH, IMG_HEIGHT))))
 
         if p1.filename == PAPER_IMG and p2.filename == SCISSORS_IMG:
             setattr(p1, 'filename', SCISSORS_IMG)
-            setattr(p1, 'image', (pygame.transform.scale(pygame.image.load(SCISSORS_IMG), (IMG_WIDTH, IMG_HEIGHT))))
+            setattr(p1, 'image', (pygame.transform.scale(load_image(SCISSORS_IMG), (IMG_WIDTH, IMG_HEIGHT))))
 
         if p1.filename == SCISSORS_IMG and p2.filename == PAPER_IMG:
             setattr(p2, 'filename', SCISSORS_IMG)
-            setattr(p2, 'image', (pygame.transform.scale(pygame.image.load(SCISSORS_IMG), (IMG_WIDTH, IMG_HEIGHT))))
+            setattr(p2, 'image', (pygame.transform.scale(load_image(SCISSORS_IMG), (IMG_WIDTH, IMG_HEIGHT))))
 
 class Object:
     def __init__(self, position, filename):
@@ -73,7 +84,7 @@ class Object:
         self.filename = filename
         self.speed = 0
         self.angle = 0
-        self.image = pygame.transform.scale(pygame.image.load(filename), (IMG_WIDTH, IMG_HEIGHT))
+        self.image = pygame.transform.scale(load_image(filename), (IMG_WIDTH, IMG_HEIGHT))
     
     def display(self, screen):
         screen.blit(self.image, (self.x, self.y))
@@ -81,7 +92,10 @@ class Object:
     def move(self):
         self.x += math.sin(self.angle) * self.speed
         self.y -= math.cos(self.angle) * self.speed
-
+    
+    def action(self):
+        pass
+    
     def bounce(self):
         if self.x > WIDTH - IMG_WIDTH:
             self.x = 2 * (WIDTH - IMG_WIDTH) - self.x
@@ -106,38 +120,39 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('Rock Paper Scissors')
 
 final_list = []
+TARGET_FPS = 30.0
+dt = TARGET_FPS / 1200.0
 
-rock_count = 10
+
 
 for n in range(rock_count):
     x = random.randint(IMG_WIDTH, (WIDTH - IMG_WIDTH))
     y = random.randint(IMG_HEIGHT, (HEIGHT - IMG_HEIGHT))
 
     item = Object((x, y), ROCK_IMG)
-    item.speed = 0.25
+    item.speed = STEP_SPEED * dt
     item.angle = random.uniform(0, math.pi * 2)
 
     final_list.append(item)
 
-paper_count = 10
 
 for n in range(paper_count):
     x = random.randint(IMG_WIDTH, (WIDTH - IMG_WIDTH))
     y = random.randint(IMG_HEIGHT, (HEIGHT - IMG_HEIGHT))
 
     item = Object((x, y), PAPER_IMG)
-    item.speed = 0.25
+    item.speed = STEP_SPEED * dt
     item.angle = random.uniform(0, math.pi * 2)
     final_list.append(item)
 
-scissors_count = 10
+
 
 for n in range(scissors_count):
     x = random.randint(IMG_WIDTH, (WIDTH - IMG_WIDTH))
     y = random.randint(IMG_HEIGHT, (HEIGHT - IMG_HEIGHT))
 
     scissors = Object((x, y), SCISSORS_IMG)
-    scissors.speed = 0.25
+    scissors.speed = STEP_SPEED * dt
     scissors.angle = random.uniform(0, math.pi * 2)
 
     final_list.append(scissors)

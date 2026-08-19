@@ -37,3 +37,10 @@ $ pip install -r requirements.txt
 ```diff
 $ python app.py
 ```
+---------------
+SeungKeol's comments. 
+edited : Apr 27th
+
+
+
+

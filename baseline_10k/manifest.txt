@@ -1,0 +1,9 @@
+episodes=100
+initial_mode=simplex
+total_agents=60
+min_per_type=10
+policy=random
+max_steps=5000
+snapshot_stride=5
+seed_base=100000
+winner_counts={'R': 41, 'S': 33, 'P': 26, 'TIMEOUT': 0}
